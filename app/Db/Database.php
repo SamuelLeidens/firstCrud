@@ -1,65 +1,115 @@
 <?php 
+
     namespace App\Db;
+    use Exception; // TRATAMENTE DE EXCEÇÕES
+    use \PDO; // CLASSE DE COMUNICAÇÃO COM O BANCO DE DADOS
+    use PDOException; // CLASSE DE TRATAMENTE DE EXCEÇÕES DO BANCO DE DADOS
+    USE PDOStatement; // CLASSE DE COMUNICAÇÃO COM MÉTODOS DO BANCO DE DADOS
 
-    use Execption;  //Classe de Tratamento de exceções
-    use \PDO;   //Classe de comunicação com o banco de dados
-    use PDOException;   //Classe de tratamento de exceções do banco de dados
-    use PDOStatement;   //Classe de comunicação com métodos do banco de dados
-
-    class Database //nome do arquivo, precisa ser igual 
-    {
-         /** 
+    class Database {
+        /**
          * Host de conexão com o banco de dados
-         *@var string
-        **/
+         * @var string
+        */
         const HOST = 'localhost';
 
         /**
-         * *Usuário do banco de dados
-         *  @var string
-         */
-        const USER = 'root';
-        
-        /**
-         * *Senha de acesso do banco de dados
-         *  @var string
-         */
-        const PASS = '';
+         * Nome do banco de dados
+         * @var string
+        */
+        const NAME = 'firs-crude';
 
-        /** 
-        *Nome do banco de dadods
-        * @var string
-         */
-        const NAME = 'firt_crude';
+        /**
+         * Usuário do banco de dados
+         * @var string
+        */
+        const USER = 'root';
+
+        /**
+         * Senha de acesso ao banco de dados
+         * @var string
+        */
+        const PASS = '';
 
         /**
          * Nome da tabela a ser manipulada
-         *  @var stribng
-         */
+         * @var string
+        */
         private $table;
 
         /**
-         * Instancia do PDO para conexão com o banco de dados
-         *  @var PDO
-         */
+         * Nome da tabela a ser manipulada
+         * @var string
+        */
         private $connection;
 
         /**
-         * Define a tabela e instancia a conexão
-         *  @param string $table
-         */
-        public function __contruct($table = null){
+         * Define a tabela e instância a conexão
+         * @param string $table
+        */
+        public function __construct($table = null) {
             $this->table = $table;
             $this->setConnection();
         }
-        
-        private function setConnection(){
-            try{
-                $this->connection = new PDO('mysql:host='.self::HOST.';dbname='.self::NAME, .self::USER,.self::PASS);
-                $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            }catch(PDOException $e){
-                die('ERROR: ' . $e->getMessage());
-            }
+            
+        /** 
+        * Método responsável por criar uma conexão com o banco de dados
+        * @param string $table
+        */
+        private function setConnection() {
+        try {
+            //PDO é a classe que recebe os parametros para devolver um objeto de conexão com o banco de dados
+            $this->connection = new PDO('mysql:host='.self::HOST.';dbname='.self::NAME, self::USER, self::PASS);
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }catch(PDOException $e){
+            die('ERROR: ' . $e->getMessage());
         }
+        }
+
+/** 
+     * Método responsável por executar querys no banco de dados (útil para querys de consulta)
+     * @params string query
+     * @param array $values [field => value]
+     * @return PDOStatement
+    */
+    public function executar($query, $params = []) {
+        try {
+            $statement = $this->connection->prepare($query);
+            $statement->execute($params);
+
+            return $statement;
+        }catch(PDOException $e) {
+            die('ERROR: ' . $e->getMessage());
+        }
+    }
+
+    /** 
+     * Método responsável por inserir registros no banco
+     * @param array $values [field => value]
+     * @return Id inserido
+    */
+    public function insert($values) {
+        // $query = 'INSERT INTO vagas (titulo, descricao, data, status) VALUES ("teste", "bla bla", "2020-08-18 00:00:00")';
+        // ? = O PDO usa esse formato para validar e verificar a proteção contra SQLInjection
+        // echo "<pre>"; print_r($values); echo "</pre>"; exit;
+        
+        //Dados da query
+        $fields = array_keys($values);
+        $binds = array_pad([], count($fields), '?');
+
+        // echo "<pre>"; print_r(implode(',', $binds)); echo "</pre>"; exit;
+        //echo "<pre>"; print_r($fields); echo "</pre>"; exit;
+        //echo "<pre>"; print_r($binds); echo "</pre>"; exit;
+
+        //Monta a query
+        //implode transporma um array em uma string
+        $query = 'INSERT INTO '.$this->table.' ('.implode(",", $fields).') VALUES ('.implode(",", $binds).')';
+        // echo "<pre>"; print_r($query); echo "</pre>"; exit;
+
+        //Executa o insert
+        $this->executar($query, array_values($values));
+
+        return $this->connection->lastInsertId();
+    }
     }
 ?>
