@@ -111,5 +111,24 @@
 
         return $this->connection->lastInsertId();
     }
+
+    /** 
+     * Método responsável por executar uma consulta no banco de dados
+     * @params string $where
+     * @params string $order
+     * @params string $limit
+     * @return PDOStatement
+    */
+    public function select($where = null, $order = null, $limit = null, $fields = '*') {
+        //Dados da query
+        $where = strlen($where) ? 'WHERE '.$where : '';
+        $order = strlen($order) ? 'ORDER '.$order : '';
+        $limit = strlen($limit) ? 'LIMIT '.$limit : '';
+
+        //Monta quer
+    $query = 'SELECT '.$fields.' FROM '.$this->table.' '.$where.' '.$order.' '.' '.$limit;
+
+        return $this->executar($query);
     }
+}
 ?>

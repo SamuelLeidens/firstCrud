@@ -56,6 +56,31 @@
             //Retornar sucesso
             return true;
         }
+        
+    /**
+     * Metodo responsavel por obter as vagas do banco de daods
+     * @params string $where
+     * @params string $order
+     * @params string $limit
+     * @return array
+     */
+
+     public static function getVagas($where = null, $order = null, $limit = null){
+         $objDatabase = new Database('Vagas');
+         return ($objDatabase)->select($where, $order, $limit)->fetchAll(PDO::FETCH_CLASS, self::class);
+     }
+
+     /**
+      * metodo responsavel por obter as vagas do base do banco de dados
+      *@params int $id
+      *@return Vagas
+     */
+
+     public static function getVaga($id){
+         $objDatabase = new Database('vagas');
+
+         return ($objDatabase)->select('id = ' . $id)->fetchObject(self::class);
+     }
    }
 
    

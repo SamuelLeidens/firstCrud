@@ -12,24 +12,29 @@
                 <th>Descrição</th>
                 <th>Data</th>
                 <th>Status</th>
+                <th>Ações</th> <!-- Para editar e excluir --> 
             </tr>
         </thead>
 
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Teste titulo</td>
-                <td>Apenas um teste</td>
-                <td>14/03/22 20:37:50</td>
-                <td>Ativo</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Ipsum Mussum</td>
-                <td>Apenas um teste</td>
-                <td>15/01/22 19:25:02</td>
-                <td>Inativo</td>
-            </tr>
+            <?php foreach ($Vaga as $key => $value) { ?>
+                <tr>
+                    <td><?php echo $value->id; ?></td>
+                    <td><?php echo $value->titulo; ?></td>
+                    <td><?php echo $value->descricao; ?></td>
+                    <td><?php echo date('d/m/y - H:i:s', strtotime($value->data)); ?></td>
+                    <td><?php echo ($value->status == 's' ? 'Ativo' : 'Inativo'); ?></td>
+                    <td>
+                        <a href="editar.php?id=<?php echo $value->id; ?>">
+                            <button type="button" class="btn btn-primary">Editar</button>
+                        </a>
+
+                        <a href="excluir.php?id=<?php echo $value->id; ?>">
+                            <button type="button" class="btn btn-danger">Excluir</button>
+                        </a>
+                    </td>
+                </tr>
+            <?php } ?>
         </tbody>
     </table>
 </section>
