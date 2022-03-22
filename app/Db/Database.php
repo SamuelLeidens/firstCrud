@@ -17,7 +17,7 @@
          * Nome do banco de dados
          * @var string
         */
-        const NAME = 'firs-crude';
+        const NAME = 'first-crud';
 
         /**
          * Usuário do banco de dados
@@ -129,6 +129,21 @@
     $query = 'SELECT '.$fields.' FROM '.$this->table.' '.$where.' '.$order.' '.' '.$limit;
 
         return $this->executar($query);
+    }
+
+    /**
+     * Método responsável por executar no banco de dados
+     * @params string $where
+     * return boolean
+     */
+    public function delete($where) {
+        //Monta query
+        $query = 'DELETE FROM '.$this->table.' WHERE ' .$where;
+        // echo "<pre>"; print_r($query); echo "</pre>"; exit;
+
+        //Executar a query
+        $this->executar($query);
+        return true;
     }
 }
 ?>

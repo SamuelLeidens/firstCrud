@@ -81,8 +81,17 @@
 
          return ($objDatabase)->select('id = ' . $id)->fetchObject(self::class);
      }
+
+
+     /**
+      * Função para excluir vagas no banco
+      * @return boolean
+      */
+      public function excluir() {
+          $objDatabase = new Database('vagas');
+
+          return ($objDatabase)->delete('id = ' . $this->id);
+      }
+
    }
-
-   
-
 ?>
